@@ -43,13 +43,16 @@ fn calculate_reward(
     }
 
     let pool_percent = (vault_amount as f64) / (start_pool as f64);
-    let steps = (held_hours - (held_hours % base_hour)) / base_hour;
+    let mut current_amount = amount as f64;
 
-    let multiplier = (steps as f32) * base_rate * (pool_percent as f32);
+    for hour in 1..=held_hours {
+        if hour % base_hour == 0 {
+            let step_multiplier = ((base_rate as f64) * pool_percent) / 100.0;
+            current_amount *= 1.0 + step_multiplier;
+        }
+    }
 
-    let reward = ((amount as f64) * ((multiplier as f64) / 100.0)).floor() as u64;
-
-    Some(reward)
+    Some(current_amount.floor() as u64)
 }
 
 #[program]
@@ -149,7 +152,7 @@ pub mod corn_vault {
         let stake_time = user_counter.stake_deposits[index];
         let time_elapsed = now.saturating_sub(stake_time).saturating_mul(1_000);
 
-        let mut withdraw_amount = amount;
+        let mut withdraw_amount = 0;
 
         if
             let Some(reward) = calculate_reward(
