@@ -107,7 +107,7 @@ pub mod corn_vault {
         require!(user_counter.total_deposits[index] == 0, CornError::AlreadyStaked);
         if
             user_counter.total_deposits[0] == 0 &&
-            iter_all_eq(user_counter.total_deposits).is_none()
+            !iter_all_eq(user_counter.total_deposits).is_none()
         {
             vault.total_stakers += 1;
             vault.current_stakers += 1;
@@ -192,7 +192,7 @@ pub mod corn_vault {
 
         if
             user_counter.total_deposits[0] == 0 &&
-            iter_all_eq(user_counter.total_deposits).is_none()
+            !iter_all_eq(user_counter.total_deposits).is_none()
         {
             vault.current_stakers = vault.current_stakers.saturating_sub(1);
         }
