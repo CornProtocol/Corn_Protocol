@@ -152,7 +152,7 @@ pub mod corn_vault {
         let stake_time = user_counter.stake_deposits[index];
         let time_elapsed = now.saturating_sub(stake_time).saturating_mul(1_000);
 
-        let mut withdraw_amount = 0;
+        let mut withdraw_amount = amount;
 
         if
             let Some(reward) = calculate_reward(
