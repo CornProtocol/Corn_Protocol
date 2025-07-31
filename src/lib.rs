@@ -166,12 +166,13 @@ pub mod corn_vault {
         {
             if reward > 0 {
                 require!(vault.amount >= reward, CornError::EmptyVault);
-                vault.amount = vault.amount.checked_sub(reward).ok_or(CornError::MathOverflow)?;
+                let gain = reward.checked_sub(withdraw_amount).ok_or(CornError::MathOverflow)?;
+                vault.amount = vault.amount.checked_sub(gain).ok_or(CornError::MathOverflow)?;
 
                 withdraw_amount = if reward_only {
-                    reward
+                    gain
                 } else {
-                    amount.checked_add(reward).ok_or(CornError::MathOverflow)?
+                    reward
                 };
             } else if reward_only {
                 withdraw_amount = 0;
